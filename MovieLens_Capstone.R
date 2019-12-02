@@ -2,6 +2,7 @@
 # Script for Data Science Capstone Movielens Project (HarvardX PH125.9x)
 # Author: Ravi Jha
 # Date: 1 Dec 2019
+# github: https://github.com/jha-r/Harvardx-PH125.9x-Capstone-MovieLens
 ##########################################################################################################################
 
 ##########################################################################################################################
@@ -175,8 +176,10 @@ rm(removed, temp, test_index)
 ## Display first few rows to understand the data structure
 head(train_set, 5)%>%
   # to format table with theme
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  # to format table with theme
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))%>%
+  row_spec(0, bold = T)
 
 
 
@@ -190,8 +193,10 @@ train_set %>%
             uniq_genres = n_distinct(genres))%>% 
   
   # to format table with theme
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  # to format table with theme
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+  row_spec(0, bold = T)
 
 
 
@@ -200,8 +205,9 @@ train_set %>%
 
 # Summary of the train_set dataset
 summary(train_set)%>%
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))%>%
+  row_spec(0, bold = T)
 
 
 
@@ -233,8 +239,9 @@ colnames(cls) <- c("userId","movieId")
 rownames(cls) <- c("Class")
 cls%>%
   # to format table with theme    
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+  row_spec(0, bold = T)
 
 
 ## Tidying data ##
@@ -250,8 +257,9 @@ year_released <- str_remove_all(year_released, "[()]")
 train_set$year_released <- as.numeric(year_released)
 # to display first few rows with newly added columns
 head(train_set, 5)%>%
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down")) %>%
+  row_spec(0, angle = 45, bold = T)
 
 
 
@@ -266,8 +274,9 @@ train_set_dr <- subset(train_set, select = -c(timestamp) )
 # to re-check the first few lines of the dataset
 head(train_set_dr, 5)%>%
   # to display as a formatted table with the theme
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))%>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down")) %>%
+  row_spec(0, angle = 45, bold = T) %>%
   footnote(general = "Column 'timestamp' is removed to accomodate 
                         table width on the page.")
 
@@ -289,9 +298,9 @@ train_set_ma <- subset(train_set_ma, select = -c(timestamp, date_rated) )
 # to display first few lines of the dataset after changes
 head(train_set_ma, 5)%>%
   
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))%>%
-  
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))  %>%
+  row_spec(0, angle = 45, bold = T) %>%
   # to add foot note to the table
   footnote(general = "Columns 'timestamp' and 'date_rated' 
                         are removed to accomodate table width on the page.")
@@ -656,8 +665,9 @@ train_set_working <- train_set %>%
 slice(train_set_working, 1:10)%>%
   
   # to apply theme to the table  
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+  row_spec(0, bold = T)
 
 
 
@@ -733,9 +743,11 @@ usr <- matrix(c(max(train_set_usr$count),min(train_set_usr$count),round(mean(tra
 colnames(usr) <- c("Most active user rated","Least active user rated","Average user rated")
 rownames(usr) <- c("Number of ratings")
 usr%>%
+
   # to apply theme to the table  
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+  row_spec(0, bold = T)
 
 
 
@@ -848,10 +860,12 @@ rmse_results <- tibble(Model = "Rating Mean Naive Model",
                        Dataset = "test_set", RMSE = round(rmse_mean, digits = 5))
 rmse_results %>% 
   # to apply theme to the table
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
+  
   # to group rows in various catagories
-  pack_rows("Basic Prediction Model", 1, 1)%>%
+  pack_rows("Basic Prediction Model", 1, 1) %>%
+  row_spec(0, bold = T) %>%
   row_spec(1:1, bold = T, color = "white", background = "#D7261E")
 
 
@@ -897,13 +911,13 @@ rmse_results <- bind_rows(rmse_results,
                           tibble(Model="Movie Effect Model", 
                                  Dataset = "test_set", RMSE = round(rmse_movie, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories  
   pack_rows("Basic Prediction Model", 1, 1) %>%
-  pack_rows("Single Predictor Model", 2, 2)%>%
-  
+  pack_rows("Single Predictor Model", 2, 2) %>%
+  row_spec(0, bold = T) %>%
   # to highlight the last row
   row_spec(2:2, bold = T, color = "white", background = "#D7261E")
 
@@ -953,13 +967,13 @@ rmse_results <- bind_rows(rmse_results,
                           tibble(Model="User Effect Model",
                                  Dataset = "test_set", RMSE = round(rmse_usr, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories  
   pack_rows("Basic Prediction Model", 1, 1)  %>%
   pack_rows("Single Predictor Model", 2, 3) %>%
-  
+  row_spec(0, bold = T) %>%
   # to highlight the last row
   row_spec(3:3, bold = T, color = "white", background = "#D7261E")
 
@@ -999,13 +1013,13 @@ rmse_results <- bind_rows(rmse_results,
                           tibble(Model="Year Released Effect Model",
                                  Dataset = "test_set", RMSE = round(rmse_YRel, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories  
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 4) %>%
-  
+  row_spec(0, bold = T)  %>%
   # to highlight the last row  
   row_spec(4:4, bold = T, color = "white", background = "#D7261E")
 
@@ -1045,13 +1059,13 @@ rmse_results <- bind_rows(rmse_results,
                           tibble(Model="Year Rated Effect Model",
                                  Dataset = "test_set", RMSE = round(rmse_YRat, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories    
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 5) %>%
-  
+  row_spec(0, bold = T)  %>%
   # to highlight the last row  
   row_spec(5:5, bold = T, color = "white", background = "#D7261E")
 
@@ -1092,14 +1106,14 @@ rmse_results <- bind_rows(rmse_results,
                           tibble(Model="Movie & User Effect Model",
                                  Dataset = "test_set", RMSE = round(rmse_Mov_Usr, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories  
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 5)  %>%
   pack_rows("Multipe Predictors Model", 6, 6) %>%
-  
+  row_spec(0, bold = T)  %>%
   # to highlight the last row  
   row_spec(6:6, bold = T, color = "white", background = "#D7261E")
 
@@ -1171,15 +1185,15 @@ rmse_results <- bind_rows(rmse_results,
                                  Dataset = "test_set   |   lambda : 5", 
                                  RMSE = round(rmse_reg, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories    
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 5)  %>%
   pack_rows("Multipe Predictors Model", 6, 6) %>%
   pack_rows("Regularized Model", 7, 7) %>%
-  
+  row_spec(0, bold = T)  %>%
   # to highlight the last row  
   row_spec(7:7, bold = T, color = "white", background = "#D7261E")
 
@@ -1232,15 +1246,15 @@ rmse_results <- bind_rows(rmse_results,
                                  Dataset = "Validation Set   |   lambda : 5", 
                                  RMSE = round(model_reg_val, digits = 5)))
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   
   # to group rows in various catagories    
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 5)  %>%
   pack_rows("Multipe Predictors Model", 6, 6) %>%
   pack_rows("Regularized Model", 7, 8) %>%
-  
+  row_spec(0, bold = T) %>%
   # to highlight the last row  
   row_spec(8:8, bold = T, color = "white", background = "#D7261E")
 
@@ -1255,12 +1269,13 @@ rmse_results %>%
 
 # to display result tables with RMSE model results 
 rmse_results %>% 
-  kable() %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kable("latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
   pack_rows("Basic Prediction Model", 1, 1) %>%
   pack_rows("Single Predictor Model", 2, 5)  %>%
   pack_rows("Multipe Predictors Model", 6, 6) %>%
   pack_rows("Regularized Model", 7, 8) %>%
+  row_spec(0, bold = T) %>%
   row_spec(8:8, bold = T, color = "white", background = "#3DDB48")
 
 
