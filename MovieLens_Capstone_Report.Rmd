@@ -238,8 +238,9 @@ Before proceeding further with analysis, examining the data is important. The fi
     head(train_set, 5)%>%
     
     # to format table with theme
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))%>%
+    row_spec(0, bold = T)
 ```
 
 
@@ -257,8 +258,9 @@ The dataset contains ~ 10,700 unique Movies, ~70,000 Users, and ~800 concatanate
               uniq_genres = n_distinct(genres))%>% 
     
     # to format table with theme
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+    row_spec(0, bold = T)
 ```
 
 
@@ -270,8 +272,9 @@ The dataset contains ~ 10,700 unique Movies, ~70,000 Users, and ~800 concatanate
     # Summary of the train_set dataset
     summary(train_set)%>%
     
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))%>%
+    row_spec(0, bold = T)
 ```
 
 
@@ -326,8 +329,9 @@ In the dataset, columns `userId` and `movieId` contains numeric data and treated
     cls%>%
       
     # to format table with theme    
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+    row_spec(0, bold = T)
 ``` 
 
 
@@ -362,8 +366,9 @@ The `title` column includes movie title and year the movie was released. This ca
     # to display first few rows with newly added columns
     head(train_set, 5)%>%
     
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down")) %>%
+    row_spec(0, angle = 45, bold = T)
 ```
 
 
@@ -389,8 +394,9 @@ Further, `year_rated` can be extracted into a separate column to aid the analysi
     head(train_set_dr, 5)%>%
     
     # to display as a formatted table with the theme
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))%>%
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down")) %>%
+    row_spec(0, angle = 45, bold = T) %>%
     footnote(general = "Column 'timestamp' is removed to accomodate 
                         table width on the page.")
 ```
@@ -419,9 +425,9 @@ Other columns such as `movie_age` (the current age of the movie) and `age_at_rev
     # to display first few lines of the dataset after changes
     head(train_set_ma, 5)%>%
     
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))%>%
-    
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed", "scale_down"))  %>%
+    row_spec(0, angle = 45, bold = T) %>%
     # to add foot note to the table
     footnote(general = "Columns 'timestamp' and 'date_rated' 
                         are removed to accomodate table width on the page.")
@@ -860,8 +866,9 @@ Moreover, there are movies which were rated only once and with extreme ratings (
       slice(train_set_working, 1:10)%>%
 
       # to apply theme to the table  
-      kable() %>% 
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+      kable("latex", booktabs = T) %>% 
+      kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+      row_spec(0, bold = T)
 ```
 
 
@@ -957,8 +964,9 @@ Furthermore, the below table depicts number of movies rated by most active, leas
     usr%>%
       
     # to apply theme to the table  
-    kable() %>% 
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+    kable("latex", booktabs = T) %>% 
+    kable_styling(latex_options = c("striped", "hover", "condensed"))%>%
+    row_spec(0, bold = T)
 
 ```
 
@@ -1118,15 +1126,16 @@ The results can be displayed in a table for easy comparison using the following 
 ```{r RMSE_result_tab, echo=TRUE, message = FALSE, warning = FALSE}
       # to display RMSE results in a tabular form
       rmse_results <- tibble(Model = "Rating Mean Naive Model", 
-                             Dataset = "test_set", RMSE = rmse_mean)
+                             Dataset = "test_set", RMSE = round(rmse_mean, digits = 5))
       rmse_results %>% 
       
       # to apply theme to the table
-      kable() %>% 
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+      kable("latex", booktabs = T) %>% 
+      kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       
       # to group rows in various catagories
-      pack_rows("Basic Prediction Model", 1, 1)%>%
+      pack_rows("Basic Prediction Model", 1, 1) %>%
+      row_spec(0, bold = T) %>%
       row_spec(1:1, bold = T, color = "white", background = "#D7261E")
 ```
 
@@ -1202,15 +1211,15 @@ Lets calcluate the RMSE and see how much it improved as compared to the last mod
       # append results to the table      
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="Movie Effect Model", 
-                                Dataset = "test_set", RMSE = rmse_movie))
+                                Dataset = "test_set", RMSE = round(rmse_movie, digits = 5)))
       rmse_results %>% 
-          kable() %>% 
-          kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+          kable("latex", booktabs = T) %>% 
+          kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
           
           # to group rows in various catagories  
           pack_rows("Basic Prediction Model", 1, 1) %>%
-          pack_rows("Single Predictor Model", 2, 2)%>%
-          
+          pack_rows("Single Predictor Model", 2, 2) %>%
+          row_spec(0, bold = T) %>%
           # to highlight the last row
           row_spec(2:2, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1285,15 +1294,15 @@ Now lets calculate RMSE for this model with the help of below code:
       # append results to the table            
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="User Effect Model",
-                                Dataset = "test_set", RMSE = rmse_usr))
+                                Dataset = "test_set", RMSE = round(rmse_usr, digits = 5)))
       rmse_results %>% 
-          kable() %>% 
-          kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+          kable("latex", booktabs = T) %>% 
+          kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       
           # to group rows in various catagories  
           pack_rows("Basic Prediction Model", 1, 1)  %>%
           pack_rows("Single Predictor Model", 2, 3) %>%
-          
+          row_spec(0, bold = T) %>%
           # to highlight the last row
           row_spec(3:3, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1349,15 +1358,15 @@ Now lets calculate RMSE for this model with the help of below code:
       # append results to the table      
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="Year Released Effect Model",
-                                Dataset = "test_set", RMSE = rmse_YRel))
+                                Dataset = "test_set", RMSE = round(rmse_YRel, digits = 5)))
       rmse_results %>% 
-          kable() %>% 
-          kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+          kable("latex", booktabs = T) %>% 
+          kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
           
           # to group rows in various catagories  
           pack_rows("Basic Prediction Model", 1, 1) %>%
           pack_rows("Single Predictor Model", 2, 4) %>%
-              
+          row_spec(0, bold = T)  %>%
           # to highlight the last row  
           row_spec(4:4, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1413,15 +1422,15 @@ Now lets calculate RMSE for this model with the help of below code:
       # append results to the table            
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="Year Rated Effect Model",
-                                Dataset = "test_set", RMSE = rmse_YRat))
+                                Dataset = "test_set", RMSE = round(rmse_YRat, digits = 5)))
       rmse_results %>% 
-          kable() %>% 
-          kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+          kable("latex", booktabs = T) %>% 
+          kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
                   
           # to group rows in various catagories    
           pack_rows("Basic Prediction Model", 1, 1) %>%
           pack_rows("Single Predictor Model", 2, 5) %>%
-          
+          row_spec(0, bold = T)  %>%
           # to highlight the last row  
           row_spec(5:5, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1488,16 +1497,16 @@ The RMSE result for the model can be appended to the results table for compariso
       # append results to the table    
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="Movie & User Effect Model",
-                                Dataset = "test_set", RMSE = rmse_Mov_Usr))
+                                Dataset = "test_set", RMSE = round(rmse_Mov_Usr, digits = 5)))
       rmse_results %>% 
-          kable() %>% 
-          kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+          kable("latex", booktabs = T) %>% 
+          kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
           
           # to group rows in various catagories  
           pack_rows("Basic Prediction Model", 1, 1) %>%
           pack_rows("Single Predictor Model", 2, 5)  %>%
           pack_rows("Multipe Predictors Model", 6, 6) %>%
-          
+          row_spec(0, bold = T)  %>%
           # to highlight the last row  
           row_spec(6:6, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1604,7 +1613,7 @@ The optimal lambda is: `r lambda`
 
 <br/>
 
-Now, let's find the RMSE for this model using optimal lambda, using the following code:
+Now, let's select the minimum RMSE for this model (for which the lambda is optimal), using the following code:
 
 
 ```{r mov_user_reg results, echo=TRUE, message = FALSE, warning = FALSE}
@@ -1614,18 +1623,18 @@ Now, let's find the RMSE for this model using optimal lambda, using the followin
       # append results to the table      
       rmse_results <- bind_rows(rmse_results, 
                               tibble(Model="Regularized Movie & User Effect Model",
-                              Dataset = "test_set   |   lambda : 5", 
-                              RMSE = rmse_reg))
+                              Dataset = paste0("test_set   |   lambda :", toString(lambda)), 
+                              RMSE = round(rmse_reg, digits = 5)))
       rmse_results %>% 
-        kable() %>% 
-        kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+        kable("latex", booktabs = T) %>% 
+        kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       
         # to group rows in various catagories    
         pack_rows("Basic Prediction Model", 1, 1) %>%
         pack_rows("Single Predictor Model", 2, 5)  %>%
         pack_rows("Multipe Predictors Model", 6, 6) %>%
         pack_rows("Regularized Model", 7, 7) %>%
-        
+        row_spec(0, bold = T)  %>%
         # to highlight the last row  
         row_spec(7:7, bold = T, color = "white", background = "#D7261E")
 ```
@@ -1640,9 +1649,8 @@ This model generated the desired RMSE value of `r rmse_reg` with an improvement 
       # Predict via regularisation, movie and user effect model on validation set
       ############################################################################
 
-      # previously selected optimal lambda
-      lambda <- 5
-              
+      # lambda is the previously selected optimal lambda
+
       # calcuate mean on edx set
       mu_edx <- mean(edx$rating)
               
@@ -1662,33 +1670,36 @@ This model generated the desired RMSE value of `r rmse_reg` with an improvement 
       predicted_ratings <- validation %>%
       left_join(movie_bias, by = "movieId") %>%
       left_join(user_bias, by = "userId") %>%
-      mutate(pred = mu_edx + b_i + b_u) %>%
-      pull(pred)
+      mutate(pred = mu_edx + b_i + b_u) 
      
+      p_r<- predicted_ratings
+      predicted_ratings <- predicted_ratings %>%
+      pull(pred)
+      
       # calculate RMSE on validation set
       model_reg_val <- RMSE(validation$rating, predicted_ratings)
 
       # append results to the table      
       rmse_results <- bind_rows(rmse_results, 
                               tibble(Model="Regularized Movie & User Effect Model",
-                              Dataset = "Validation Set   |   lambda : 5", 
-                              RMSE = model_reg_val))
+                              Dataset = paste0("Validation Set   |   lambda :", toString(lambda)),
+                              RMSE = round(model_reg_val, digits = 5)))
       rmse_results %>% 
-        kable() %>% 
-        kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+        kable("latex", booktabs = T) %>% 
+        kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       
       # to group rows in various catagories    
       pack_rows("Basic Prediction Model", 1, 1) %>%
       pack_rows("Single Predictor Model", 2, 5)  %>%
       pack_rows("Multipe Predictors Model", 6, 6) %>%
       pack_rows("Regularized Model", 7, 8) %>%
-        
+      row_spec(0, bold = T) %>%
       # to highlight the last row  
       row_spec(8:8, bold = T, color = "white", background = "#D7261E")
 
 ```
 
-This model generated the desired RMSE value of *`r model_reg_val`* on validation set. Next, we list and compare all the results in the next section.
+This model generated the desired RMSE value of *`r round(model_reg_val, digits = 5)`* on validation set. Next, we list and compare all the results in the next section.
 
 <br/>
 \pagebreak
@@ -1701,12 +1712,13 @@ The result of RMSE derived from various models is listed below. As we can clearl
 ```{r results, echo=TRUE, message = FALSE, warning = FALSE}
       # to display result tables with RMSE model results 
       rmse_results %>% 
-      kable() %>% 
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+      kable("latex", booktabs = T) %>% 
+      kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       pack_rows("Basic Prediction Model", 1, 1) %>%
       pack_rows("Single Predictor Model", 2, 5)  %>%
       pack_rows("Multipe Predictors Model", 6, 6) %>%
       pack_rows("Regularized Model", 7, 8) %>%
+      row_spec(0, bold = T) %>%
       row_spec(8:8, bold = T, color = "white", background = "#3DDB48")
 
 ```
@@ -1719,7 +1731,7 @@ The result of RMSE derived from various models is listed below. As we can clearl
 
 The main aim of the project is to develop a recommendation system to predict movie ratings. The provided 10M MovieLens dataset is a real-world challenge that seasoned data scientists would have handled. From data setup, data wrangling as well as exploratory analysis and ggplot based visualization graphs to various modeling approaches, the concepts learned throughout the series of courses are implemented. 
 
-Initially, basic prediction models including Rating Mean and single predictors based models are developed, later more complex multiple predictors models are attempted and finally **regularized Movie and User Effect predictive model** is implemented. A RMSE value of **`r model_reg_val` ** is attained on validation set which is less than the targeted value.
+Initially, basic prediction models including Rating Mean and single predictors based models are developed, later more complex multiple predictors models are attempted and finally **regularized Movie and User Effect predictive model** is implemented. A RMSE value of **`r round(model_reg_val, digits = 5)` ** is attained on validation set which is less than the targeted value.
  
 
 ### 7.2 Future work
