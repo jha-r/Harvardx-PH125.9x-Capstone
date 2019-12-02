@@ -142,7 +142,6 @@ validation <- temp %>%
 # Add rows removed from validation set back into edx set
 removed <- anti_join(temp, validation)
 edx <- rbind(edx, removed)
-edx <- sample_n(edx, 1000) ## TBD
 
 # Remove unused objects from the memory
 rm(test_index, movielens, removed)
@@ -758,7 +757,7 @@ train_set %>%
   
   # to plot graph for bias for individual user who rated atleast 100 movies
   group_by(userId) %>%
-  filter(n() >= 1) %>% ## TBD make it 100
+  filter(n() >= 100) %>% 
   summarize(b_u = mean(rating)) %>%
   
   # to map user bias variable to aesthetics of ggplot function
@@ -1284,14 +1283,14 @@ rmse_results %>%
 
 cat("Final RMSE: ", toString(round(model_reg_val, digits = 5)))
 
-# Please Note: As per the course requirement the final RMSE is printed; however, detailed result table is displayed in the 'Viewer' pane.
+# Please Note: As per the course requirement the final RMSE is printed; however, detailed result table is displayed in the supplementary .Rmd report.
 # Also, as predicted raitings contains 10M columns it is not feasible to display on the screen, 
-# Hence, it is are stored along with other columns in a new datase 'edx_with_prediction' which can be viewd from Environment pane.
+# Hence, it is stored along with other columns in a new datase 'edx_with_prediction' which can be viewd from Environment pane.
 
 
 ## to clear-up memory
 # Remove objects    
-rm(train_set_dr, train_set_ma, train_set_usr, year_released, cls, usr, mu)  
+rm(train_set_dr, train_set_ma, train_set_usr, year_released, cls, usr, mu, YRat_avgs, YRel_avgs, edx, movie_bias, user_bias)  
 # Call Garbage Collector
 gc()
 
