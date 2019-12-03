@@ -1301,4 +1301,3 @@ cat("Final RMSE: ", toString(round(model_reg_val, digits = 5)))
 rm(train_set_dr, train_set_ma, train_set_usr, year_released, cls, usr, mu, YRat_avgs, YRel_avgs, edx, movie_bias, user_bias)  
 # Call Garbage Collector
 gc()
-

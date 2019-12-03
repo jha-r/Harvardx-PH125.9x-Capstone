@@ -195,7 +195,6 @@ The following code is used to generate the required datasets.
     # Add rows removed from validation set back into edx set
     removed <- anti_join(temp, validation)
     edx <- rbind(edx, removed)
-    edx <- sample_n(edx, 1000) ## TBD
     
     # Remove unused objects from the memory
     rm(test_index, movielens, removed)
@@ -500,7 +499,7 @@ There are fewer *half-star ratings* than *whole-star ratings*. This may be due t
 
     # to provide a title, x, and y axis labels
     labs(title = "Ratings vs Year Rating introduced", 
-         x = "Movie Ratings", y = "Year Rating introduced")
+         x = "Movie Ratings", y = "Year Movies first rated with the rating")
 ```
 
 This does not appear to affect the rating distribution. However, this may need more careful analysis later while modeling.
@@ -512,7 +511,7 @@ This does not appear to affect the rating distribution. However, this may need m
 
 #### Average Movie Rating variation over years
 
-Let's check how the average movie rating has changed over time. As shown in the graph below the overall average movie rating has declined over the given period. However, the majority of averages are within the vicinity of the overall average rating.
+Let's check how the average movie rating has changed over time. As shown in the graph below the majority of averages are within the vicinity of the overall average rating, with higher average ratings between 1996 to 2001.
 
 ```{r Rating variation}
     train_set %>% 
@@ -534,6 +533,7 @@ Let's check how the average movie rating has changed over time. As shown in the 
     geom_hline(yintercept = mu, linetype = "dashed", color="#1380A1", size=1) + 
     
     # scale axis to custom range and intervels  
+    scale_x_discrete(limits = c(seq(1995,2009,1)))  +  
     scale_y_discrete(limits = c(seq(0.5,5,0.5)))  +
     
     # to provide a title, x, and y axis labels
@@ -1016,7 +1016,7 @@ Moreover, it can be noticed from the below graph that some users preferred to gi
   
       # to plot graph for bias for individual user who rated atleast 100 movies
       group_by(userId) %>%
-      filter(n() >= 1) %>% ## TBD make it 100
+      filter(n() >= 100) %>% 
       summarize(b_u = mean(rating)) %>%
       
       # to map user bias variable to aesthetics of ggplot function
@@ -1554,7 +1554,7 @@ From the result, we can see an improvement in the RSME; however, it is still hig
 
 #### 5.4.2 Other Multiple Predictors Models
 
-Moreover, there are multiple combinations of potential predictors (as shown below) that could be tried to calculate and compare RMSE; however, to keep the scope of this report limited to the goal of achieving the RMESE, other multiple predictors models are not discussed here.
+Moreover, there are multiple combinations of potential predictors (as shown below) that could be tried to calculate and compare RMSE; however, to keep the scope of this report limited to the goal of achieving the RMSE, other multiple predictors models are not discussed here.
 
 Predictors: `movieId`, `userId`, `year_rated`, `year_released`, `age_at_review`, & `genre`
 
@@ -1570,14 +1570,18 @@ Regularization allows penalizing large estimates that are formed using small sam
 
 Let's start with modifying the combined Movie and User Effects Model shown in the last section. The Regularized model uses a tuning parameter, $\lambda$, to minimize the effects of obscure movies and users on the prediction and in turn minimize the RMSE. 
 
-The new model with $b_{i,n,\lambda}$ and $b_{u,n,\lambda}$ can be represented as follows:
+The least square model that we dicussed in the last section cannot limit variability of the movie and user effect sizes, so we will target to minimize the following penalized regression equation:
 
+$$\frac{1}{N} \sum_{u,i} \left(y_{u,i} - \mu - b_i - b_u \right)^2 + \lambda \left(\sum_{i} b_i^2 + \sum_{u} b_u^2\right)$$
 
-$$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$  TBD
+where N is sample size, $b_i$ is movie bias, $b_u$ is user bias, $\lambda$ is tuning parameter, $\mu$ is mean
+
+The first term is for least squares of user and movie effects and second is a penalty term which is controlled by $\lambda$ (if bais gets large so the whole panelty, and negates the overall effect).
+
 
 <br/>
 
-The regularization parameter Lambda $(\lambda)$ controls the tradeoff between fitting training data and model complexity by adjusting the weight of the penalty term.
+Moreover, the regularization parameter Lambda $(\lambda)$ controls the tradeoff between fitting training data and model complexity by adjusting the weight of the penalty term.
 
 *-* If your lambda value is too high, the model will be simple, but there is a risk of underfitting data. The model won't learn enough about the training data to make useful predictions.
 
