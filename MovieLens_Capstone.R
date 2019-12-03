@@ -337,17 +337,25 @@ train_set %>%
 
 # plot to determine when the half-star raintgs started
 train_set %>%
-  # map date_rated and rating variables to aesthetics of ggplot function
-  ggplot(aes(x = date_rated, y = rating)) +
+  
+  group_by(rating) %>% 
+  
+  summarise(min_year = min(year_rated), count =n()) %>% 
+  # to map year_rated and mean rating variables to aesthetics of ggplot function
+  ggplot(aes(x = rating, y = min_year)) +
   
   # to plot scattered data using geom_point
-  geom_point(alpha = 0.5, col = "#00AFBB") +
+  geom_point(alpha = 2, col = "#00AFBB") +
+  # to draw line to connect data points
+  geom_line(colour = "#FC4E07", size = .5) + 
   
   # scale axis to custom range and intervels
-  scale_y_discrete(limits = c(seq(0.5,5,0.5)))  +
+  scale_x_discrete(limits = c(seq(0.5,5,0.5)))  +
+  scale_y_discrete(limits = c(seq(1995,2009,1)))  +
   
   # to provide a title, x, and y axis labels
-  labs(title = "Year Rated vs Movie Rating", x = "Year Rated", y = "Movie Rating")
+  labs(title = "Ratings vs Year Rating introduced", 
+       x = "Movie Ratings", y = "Year Rating introduced")
 
 
 
@@ -1226,14 +1234,14 @@ user_bias <- validation %>%
 # first left join validations with movie bias by movieId and then 
 # join again with user bias using userId
 
-# edx_with_prediction is a temporary dataset to store predicted ratings along with other edx colums
-edx_with_predictions <- validation %>%
+# true_and_predicted_ratings is a temporary dataset to store predicted ratings along with other edx colums
+  true_and_predicted_ratings <- validation %>%
   left_join(movie_bias, by = "movieId") %>%
   left_join(user_bias, by = "userId") %>%
   mutate(pred = mu_edx + b_i + b_u)
 
 # to pull predicted ratings for RMSE calculation
-predicted_ratings <- edx_with_predictions %>%
+  predicted_ratings <- true_and_predicted_ratings %>%
   pull(pred)
 
 # calculate RMSE on validation set
@@ -1285,7 +1293,7 @@ cat("Final RMSE: ", toString(round(model_reg_val, digits = 5)))
 
 # Please Note: As per the course requirement the final RMSE is printed; however, detailed result table is displayed in the supplementary .Rmd report.
 # Also, as predicted raitings contains 10M columns it is not feasible to display on the screen, 
-# Hence, it is stored along with other columns in a new datase 'edx_with_prediction' which can be viewd from Environment pane.
+# Hence, it is stored along with other columns in a new datase 'true_and_predicted_ratings' which can be viewd from Environment pane.
 
 
 ## to clear-up memory
