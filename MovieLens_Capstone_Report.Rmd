@@ -1,7 +1,7 @@
 ---
 title: "HavardX PH125.9x Data Science Capstone MovieLens Project Report"
 author: "Ravi Jha"
-date: "11/25/2019"
+date: "12/01/2019"
 output:
   pdf_document: 
     
@@ -12,9 +12,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(knitr)
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, 
-                      message = FALSE, cache.lazy = FALSE)
+    library(knitr)
+    knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, 
+                          cache.lazy = FALSE, fig.align='center', fig.width=5.5, fig.height=3.5)
 ```
 
 \pagebreak
@@ -71,7 +71,7 @@ Let's start with the provided dataset, as per course instruction, the *10M versi
 To assist with our data import and initial setup, several packages from *CRAN* is utilized and loaded. These will be automatically downloaded and installed during code execution. 
 
 
-```{r data import and initial setup, echo = TRUE, message=FALSE, warning=FALSE}
+```{r data import and initial setup}
 ##########################
 # to import and setup data
 ##########################
@@ -164,15 +164,15 @@ if(!file.exists("MovieLens.RData"))
 
 ### 2.3 Spliting dataset: Training and Validation Sets
 
-As per the project guidelines, the dataset will first be split into *edx* and *validation* set (10%), and then the edx set will then be further split into a *training* and *test* set with the test set being 10%. The algorithm is developed using the edx set (train_set & test_set). For a final test of the algorithm, we predict movie ratings in the validation set as if they were unknown. The splitting scheme is represented as follows:
+As per the project guidelines, the dataset will first be split into *edx* and *validation* set (10%), and the edx set will then be further split into a *training* and *test* set with the test set being 10%. The algorithm is developed using the edx set (train_set & test_set). For a final test of the algorithm, we predict movie ratings in the validation set as if they were unknown. The splitting scheme is represented as follows:
 
-![Dataset Spliting](/R/Projects/MovieLens/datasets.jpg){#id .class width=50% height=50%} 
+![Dataset Spliting](datasets.jpg){#id .class width=50% height=50%} 
 
 \pagebreak
 
 The following code is used to generate the required datasets. 
 
-```{r split datasets, echo=TRUE, message=FALSE, warning = FALSE, cache = TRUE}
+```{r split datasets, cache = TRUE}
     ##############################################################################    
     # to split datasets into edx, validation, train_set, and test_set
     ##############################################################################
@@ -233,7 +233,7 @@ The next step is to understand the data through a brief data review and then do 
 
 Before proceeding further with analysis, examining the data is important. The first step in it is to understand the format and the contents by looking at the few rows.
 
-```{r Inital analysis-head, echo=TRUE, message = FALSE, warning = FALSE}
+```{r Inital analysis-head}
     # Display first few rows to understand the data structure
     head(train_set, 5)%>%
     
@@ -250,7 +250,7 @@ Before proceeding further with analysis, examining the data is important. The fi
 
 The dataset contains ~ 10,700 unique Movies, ~70,000 Users, and ~800 concatanated Genres.
 
-```{r Unique values, echo=TRUE, message = FALSE, warning = FALSE}
+```{r Unique values}
     # To display unique values for movies, users, and genres columns
     train_set %>% 
     summarise(uniq_movies = n_distinct(movieId),
@@ -268,7 +268,7 @@ The dataset contains ~ 10,700 unique Movies, ~70,000 Users, and ~800 concatanate
 
 #### Summary and Average Rating
 
-```{r summary, include=TRUE, echo=TRUE, message = FALSE, warning = FALSE}
+```{r summary, include=TRUE}
     # Summary of the train_set dataset
     summary(train_set)%>%
     
@@ -278,7 +278,7 @@ The dataset contains ~ 10,700 unique Movies, ~70,000 Users, and ~800 concatanate
 ```
 
 
-```{r rating mean, echo=TRUE, message = FALSE, warning = FALSE}
+```{r rating mean}
     # to calculate ratings Mean mu
     mu <- mean(train_set$rating)
 ```
@@ -291,7 +291,7 @@ Mean Rating (mu): `r mu`
 
 There are 10 different rating scores, lowest is 0.5 and highest is 5.0.
 
-```{r ratings scores, echo=TRUE, message = FALSE, warning = FALSE}
+```{r ratings scores}
     
     # to list different rating scores 
     uniq_ratings <- unique(train_set$rating)
@@ -306,7 +306,7 @@ There are 10 different rating scores, lowest is 0.5 and highest is 5.0.
 
 There are no missing values in the dataset as there are *`r length(which(colSums(is.na(train_set)) > 0))`* columns with at least one NA.
 
-```{r missing data, echo=TRUE, message = FALSE, warning = FALSE}
+```{r missing data}
    
       # To find NA values in the dataset
       anyNA(train_set)
@@ -317,9 +317,9 @@ There are no missing values in the dataset as there are *`r length(which(colSums
 
 #### Factorizing Variables
 
-In the dataset, columns `userId` and `movieId` contains numeric data and treated as integers by R. These columns can be converted to factor as this could be used as categorical data; however, in the current scenario it makes more sense to leave it as numeric to keep later computation easier e.g. summarize() function and other numeric calculations can be done easily.
+In the dataset, columns `userId` and `movieId` contains numeric data and treated as numeric/integer by R. These columns can be converted to factor as this could be used as categorical data; however, in the current scenario it makes more sense to leave it as numeric to keep later computation easier e.g. summarize() function and other numeric calculations can be done easily.
 
-```{r userid-movieid class, echo=FALSE, message = FALSE, warning = FALSE}
+```{r userid-movieid class, echo=FALSE}
     
     # to display class of userId and movieId column in a tabular form
     cls <- matrix(c(class(train_set$userId), class(train_set$movieId)), ncol=2, byrow=TRUE)
@@ -354,7 +354,7 @@ Based on the initial understanding further data analysis is required to identify
  
 The `title` column includes movie title and year the movie was released. This can be extracted as `year_released` in a separate column using the following code:
 
-```{r extract-year_released, echo=TRUE, message = FALSE, warning = FALSE}
+```{r extract-year_released}
     
     # Extract year_released with brackets    
     year_released <- str_extract(train_set$title, "\\(\\d{4}\\)$") 
@@ -381,7 +381,7 @@ Next, the `timestamp` column contains a UNIX timestamp (the number of seconds si
 Further, `year_rated` can be extracted into a separate column to aid the analysis, using the following code:
 
 
-```{r date-year rated, echo=TRUE, message = FALSE, warning = FALSE}
+```{r date-year rated}
     
     # Convert timestamp to date_rated and extrat year as year_rated columns
     train_set <- train_set %>% mutate(date_rated = as_datetime(timestamp), 
@@ -409,7 +409,7 @@ Further, `year_rated` can be extracted into a separate column to aid the analysi
 Other columns such as `movie_age` (the current age of the movie) and `age_at_review` (age of the movie when it was rated) can be helpful for the analysis. Following is the code to add it in the dataset:
 
 
-```{r movie_age and age_at_review, echo=TRUE, message = FALSE, warning = FALSE}
+```{r movie_age and age_at_review}
     
     # create movie_age by substracing current year to the year movie was released
     # create age_at_review by substrating year the movie was rated and it was released
@@ -448,7 +448,7 @@ The chart shows that users have a preference to rate movies rather higher than l
 
 The difference in the median and mean noted in the *Summary and Average Ratings* section above also supports the negative skewness slope of the distribution towards higher ratings.
 
-```{r rating_distribution, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r rating_distribution}
     # to plot rating against ratings count
     train_set %>%
     # map rating variable to aesthetics of ggplot function
@@ -471,26 +471,36 @@ The difference in the median and mean noted in the *Summary and Average Ratings*
 
 <br/>
 
+\pagebreak
+
 #### Half-star Ratings
 
-There are fewer *half-star ratings* than *whole-star ratings*. This may be due to the factors involving users' rating preference and also the fact that the half-star ratings are introduced in 2003 as shown below. 
+There are fewer *half-star ratings* than *whole-star ratings*. This may be due to the factors involving users' rating preference and also the fact that the half-star ratings are introduced in 2003. The below graph shows in which year the movies with the ratings (0.5- 5) were first got rated as shown below. 
 
 
-```{r Half-star Ratings, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r Half-star Ratings}
     
     # plot to determine when the half-star raintgs started
     train_set %>%
-    # map date_rated and rating variables to aesthetics of ggplot function
-    ggplot(aes(x = date_rated, y = rating)) +
+  
+    group_by(rating) %>% 
+
+    summarise(min_year = min(year_rated), count =n()) %>% 
+    # to map year_rated and mean rating variables to aesthetics of ggplot function
+    ggplot(aes(x = rating, y = min_year)) +
     
     # to plot scattered data using geom_point
-    geom_point(alpha = 0.5, col = "#00AFBB") +
-    
+    geom_point(alpha = 2, col = "#00AFBB") +
+    # to draw line to connect data points
+    geom_line(colour = "#FC4E07", size = .5) + 
+  
     # scale axis to custom range and intervels
-    scale_y_discrete(limits = c(seq(0.5,5,0.5)))  +
-    
+    scale_x_discrete(limits = c(seq(0.5,5,0.5)))  +
+    scale_y_discrete(limits = c(seq(1995,2009,1)))  +
+
     # to provide a title, x, and y axis labels
-    labs(title = "Year Rated vs Movie Rating", x = "Year Rated", y = "Movie Rating")
+    labs(title = "Ratings vs Year Rating introduced", 
+         x = "Movie Ratings", y = "Year Rating introduced")
 ```
 
 This does not appear to affect the rating distribution. However, this may need more careful analysis later while modeling.
@@ -498,11 +508,13 @@ This does not appear to affect the rating distribution. However, this may need m
 
 <br/>
 
+\pagebreak
+
 #### Average Movie Rating variation over years
 
 Let's check how the average movie rating has changed over time. As shown in the graph below the overall average movie rating has declined over the given period. However, the majority of averages are within the vicinity of the overall average rating.
 
-```{r Rating variation, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r Rating variation}
     train_set %>% 
   
     # to plot graph for mean rating for individual year movies were rated
@@ -536,11 +548,13 @@ Let's check how the average movie rating has changed over time. As shown in the 
 
 <br/>
 
+\pagebreak
+
 #### Movie current age vs its average rating
 
-The below chart depicts the relationship of the movie's current age to the movies' average rating. Rating varies with the movie age. It is evident that the average rating is higher for the older movies up to 90 years old, then the rating droped. Also, the average rating is highest for movies with age around 75 years.
+The below chart depicts the relationship of the movie's current age to the movies' average rating. Rating varies with the movie age. It is evident that the average rating is higher for the older movies up to 90 years old, then the rating droped. Also, the average rating is highest for movies with age around 75 years; however, movies with the current age around 25 received have higher rating count.
 
-```{r ave vs avg rating, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r ave vs avg rating}
     train_set %>%
     
     # to plot graph for mean rating for individual year movies were rated
@@ -571,12 +585,14 @@ The below chart depicts the relationship of the movie's current age to the movie
 
 <br/>
 
+\pagebreak
+
 
 #### Movie current age vs No. of ratings received
 
 It can be clearly seen from the below graph that the movies with age between 15-25 years have received the highest number of ratings. It makes sense as it correlates with when the rating system was introduces.  On the other hand, the movies with more than 50 years of age the number of ratings has declined significantly.
 
-```{r avg vs rating count, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r avg vs rating count}
     # to plot Movie current age vs No. of ratings received
     train_set %>%
     
@@ -605,11 +621,13 @@ It can be clearly seen from the below graph that the movies with age between 15-
 
 <br/>
 
+\pagebreak
+
 #### Users vs average rating given by the user
 
 From the chart below it can be observed that the majority of the average ratings by users are consistent between ~2.5 and ~4.5.
 
-```{r user vs mean rating, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r user vs mean rating}
     # userId vs average movie rating
     train_set %>%
   
@@ -641,11 +659,13 @@ From the chart below it can be observed that the majority of the average ratings
   
 <br/>
 
+\pagebreak
+
 #### Users vs No. of movies rated by user
 
 Furthermore, the majority of users rated a maximum of ~500 movies, and there are very limited users who rated more than 3,000 movies.
 
-```{r user vs rating count, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r user vs rating count}
     # to plot a graph userId against average movie rating
     train_set %>%
     
@@ -674,13 +694,15 @@ Furthermore, the majority of users rated a maximum of ~500 movies, and there are
 
 <br/>
 
+\pagebreak
+
 #### Movie Age at the time of review vs Average Rating
 
 The below graph shows how does a rating change related to the movie's age at the time of the review (denoted by `age_at_review`). It can be seen that the movies with the age between 40 and 70 year's of age at the time of review received higher average rating. Also, the average rating for movies increased intiailly before dropping after 70 year of age.
 
 Furthermore, the data points that show reviews before the release date are either bad data points or were reviewed by critics before the movie was actually premiered.
 
-```{r age at review vs avg rating, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r age at review vs avg rating}
     # to plot a graph showing movie's age at the time of the revoew and its average rating    
     train_set %>%
   
@@ -713,11 +735,13 @@ Furthermore, the data points that show reviews before the release date are eithe
 
 <br/>
 
+\pagebreak
+
 #### Movie Age at the time of review vs No. of Ratings
 
 It is evident from the graph that the review count is higher for movies recently premiered; as the age at the time of review increases the number of ratings plummeted significantly. There also few movies which were rated before its release, it could be because of erroneous data or critics gave the ratings before the release.
 
-```{r age at review vs rating count, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r age at review vs rating count}
     # to plot age at review vs rating count    
     train_set %>%
   
@@ -746,11 +770,13 @@ It is evident from the graph that the review count is higher for movies recently
 
 <br/>
 
+\pagebreak
+
 #### Movie Year Released vs its average rating
 
 The next observation shows that the movies premiered between 1930 and 1970 have received a higher average rating; whereas for most of the movies released after 1985 the average rating received is less than the overall rating average. It also shows that the user preferred to give higher ratings before 1985.
 
-```{r year released vs mean rating, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r year released vs mean rating}
       # to plot year released against average ratings      
       train_set %>%
       
@@ -783,11 +809,13 @@ The next observation shows that the movies premiered between 1930 and 1970 have 
 
 <br/>
 
+\pagebreak
+
 #### Movie Year Released vs number of ratings
 
 The other observation is that the movies released between 1990-2000 received an exceptionally higher number of ratings. In general, more recent movies get more ratings and the movies released before 1930 get few ratings. The year 2009 shows a steep decline probably attributed to the fact that this dataset does not contain the movie rating for the full year 2009.
 
-```{r year released vs rating count, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r year released vs rating count}
       # to plot year_released against count of the ratings      
       train_set %>%
   
@@ -816,11 +844,13 @@ The other observation is that the movies released between 1990-2000 received an 
 
 <br/>
 
+\pagebreak
+
 #### Movies Distribution
 
 It can be noticed from the below distribution that some movies are rated much often than other movies.
 
-```{r movie_distribution, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r movie_distribution}
       # to plot movie and the count of ratings recieved by a specific movie       
       train_set %>%
   
@@ -845,7 +875,7 @@ It can be noticed from the below distribution that some movies are rated much of
 
 Moreover, there are movies which were rated only once and with extreme ratings (rating less than 2 or more than 4), following table shows the 10 such movies:
 
-```{r obsure movies, echo = TRUE ,messages = FALSE, warning = FALSE}
+```{r obsure movies}
       # filter out obscure outliers movies which was rated once and with 
       # extreme ratings (rating less than 2 or more than 4)     
 
@@ -877,11 +907,13 @@ In fact, there are **`r nrow(train_set_working)`** movies (in train_set) with ex
 
 <br/>
 
+\pagebreak
+
 #### Movie Popularity
 
 Lets, now check the relationship between the number of reviews a movie received and the average rating of that movie. It can be noticed from the graph below that the popular movies received a higher rating average as well as the number of ratings. On the other hand, a general trend is of less rating average and the number of ratings received for less popular movies.
 
-```{r movie popularity, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r movie popularity}
       
       # to plot review count and average ratings received by a specific movie
       train_set %>% 
@@ -916,11 +948,13 @@ Lets, now check the relationship between the number of reviews a movie received 
 
 <br/>
 
+\pagebreak
+
 #### Users Distribution
 
 It can be noticed by looking at the below user distribution graph that some users more actively rated movies than others. 
 
-```{r user_distribution, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r user_distribution}
       
       # to plot number of ratings given by a specific user
       train_set %>%
@@ -947,7 +981,7 @@ It can be noticed by looking at the below user distribution graph that some user
 
 Furthermore, the below table depicts number of movies rated by most active, least active, and average user.
 
-```{r user activity, echo = FALSE, message = FALSE, warning = FALSE}
+```{r user activity, echo = FALSE}
     # to display a tabulated data of number of ratins given by most active, least active, and average users
     # to create a temporary dataset
     train_set_usr <- train_set %>%
@@ -976,7 +1010,7 @@ Furthermore, the below table depicts number of movies rated by most active, leas
 Moreover, it can be noticed from the below graph that some users preferred to give higher ratings while others tend to give lower than average ratings. To eliminate the *effect of outlier* points only the *users who rated 100 or more ratings* are included.
 
 
-```{r Mean_movie_ratings_given_by_users, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r Mean_movie_ratings_given_by_users}
       # "Mean movie ratings given by users     
       train_set %>%
   
@@ -1007,6 +1041,8 @@ Moreover, it can be noticed from the below graph that some users preferred to gi
 
 <br/>
 
+\pagebreak
+
 
 #### Number of movies rated per year
 
@@ -1014,7 +1050,7 @@ Next, we can see that in 1995 the least number of movies got rated; whereas 2008
 It can also be noticed, the number of movies rated each year constantly increased from 1995 to 2008 before dropping in 2009. The sharp decline in 2009 may be due to the fact that the data is not collected for the whole year, and as it is the case with 1995 as well.
 
 
-```{r num_movies_rated_per_year, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r num_movies_rated_per_year}
       # to plot number of movies rated per year            
       train_set %>%
   
@@ -1050,7 +1086,7 @@ It can also be noticed, the number of movies rated each year constantly increase
 
 As we saw in the previous graph, despite the most number of active users in the year 1996 fewer movies were rated. This implies that the movie rating system after getting introduced in 1995, in 1996 more users interested and rated movies; however, in the following years comparatively fewer users rated more movies.
 
-```{r active_usrs_per_year, fig.align='center', echo = TRUE, message = FALSE, warning = FALSE}
+```{r active_usrs_per_year}
       # to plot number of active users per year      
       train_set %>%
   
@@ -1111,7 +1147,7 @@ where $\mu$ is the mean which shows the true rating value for all movies. And, $
 Now, lets now calculate RMSE for this model as follow:
 
 
-```{r rmse_mu, echo=TRUE, message = FALSE, warning = FALSE}
+```{r rmse_mu}
       ###############################      
       # to find basic naive mean RMSE
       ###############################
@@ -1123,7 +1159,7 @@ This gives us our first model with RMSE to start with. Also, it can be noticed t
 
 The results can be displayed in a table for easy comparison using the following code:
 
-```{r RMSE_result_tab, echo=TRUE, message = FALSE, warning = FALSE}
+```{r RMSE_result_tab}
       # to display RMSE results in a tabular form
       rmse_results <- tibble(Model = "Rating Mean Naive Model", 
                              Dataset = "test_set", RMSE = round(rmse_mean, digits = 5))
@@ -1155,7 +1191,7 @@ This model takes into account the effect of the movie considering that each movi
 
 As it can be seen from the graph below, the left skewness implies that more movies have negative effects (rated less than the average).
 
-```{r movie bias, fig.align='center',echo = FALSE, message = FALSE, warning = FALSE}  
+```{r movie bias, fig.align='center',echo = FALSE}  
       # to plot movie bias density graph
       mu <- mean(train_set$rating)
       train_set %>% 
@@ -1189,7 +1225,7 @@ Individual movie bias is calculated using the formula: $$b_i = mean (rating_i - 
 
 Lets calcluate the RMSE and see how much it improved as compared to the last model using the following code:
 
-```{r movie effect model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r movie effect model}
       ##################################################      
       # model taking into account the movie effects, b_i
       ##################################################
@@ -1235,7 +1271,7 @@ Furthermore, lets now check the User Effect Model. This model takes into account
 
 
 
-```{r user bias, fig.align='center', echo = FALSE, message = FALSE, warning = FALSE}  
+```{r user bias, echo = FALSE}  
       # to plot movie bias graph    
       mu <- mean(train_set$rating)
   
@@ -1270,7 +1306,7 @@ Individual user bias is calculated using the formula: $$b_u = mean (rating_u - \
 
 Now lets calculate RMSE for this model with the help of below code:
 
-```{r user effect model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r user effect model}
       ##################################################
       # model taking into account the user effects, b_u
       ##################################################
@@ -1328,7 +1364,7 @@ Individual year released bias is calculated using the formula: $$b_p = mean (rat
 Now lets calculate RMSE for this model with the help of below code:
 
 
-```{r year released effect model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r year released effect model}
       #################################################################
       # model taking into account the year released effects, b_p (bias)
       #################################################################
@@ -1393,7 +1429,7 @@ Now lets calculate RMSE for this model with the help of below code:
 
 
 
-```{r year rated effect model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r year rated effect model}
       ##########################################################################
       # model taking into account the year a movie was rated effects, b_r (bias)
       ##########################################################################
@@ -1461,7 +1497,7 @@ Please note, least-squares lm() method is not being used as it is computation-in
 
 Now, lets calculate the RMSE for this model using the following code:
 
-```{r movie and user effects, echo=TRUE, message = FALSE, warning = FALSE}
+```{r movie and user effects}
       #########################################
       ## the model taking Movie and User bias
       #########################################
@@ -1493,7 +1529,7 @@ Now, lets calculate the RMSE for this model using the following code:
 
 The RMSE result for the model can be appended to the results table for comparison as follows:
 
-```{r mov user rmse, echo=TRUE, message = FALSE, warning = FALSE}
+```{r mov user rmse}
       # append results to the table    
       rmse_results <- bind_rows(rmse_results, 
                                 tibble(Model="Movie & User Effect Model",
@@ -1549,7 +1585,7 @@ The regularization parameter Lambda $(\lambda)$ controls the tradeoff between fi
 
 Let's calculate RMSEs for different values of lambdas:
 
-```{r regularized mov_usr_model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r regularized mov_usr_model}
       ##########################################################
       # Predict via regularisation, movie and user effect model
       ##########################################################
@@ -1595,14 +1631,14 @@ Let's calculate RMSEs for different values of lambdas:
 
 Now, lets plot RMSE vs lambdas to select the optimal value of lambda which minimizes the RMSE:
 
-```{r plot_lambdas, fig.align='center', echo=TRUE, message = FALSE, warning = FALSE}
+```{r plot_lambdas}
       # plot a graph lambdas against generated rmses  
       qplot(lambdas, rmses, geom=c("point", "line")) 
 ```
 
 Based on the plotted graph we can clearly see the value of RMSE is minimum for lambdas ~ 5, let's check the optimal lambda for which RMSE is minimum using the following code :
 
-```{r min_lambda, echo=TRUE, message = FALSE, warning = FALSE}
+```{r min_lambda}
       # to find the minimum value of lambda from lambdas for which RMSE is minimum
       lambda <- lambdas[which.min(rmses)]
       lambda
@@ -1616,7 +1652,7 @@ The optimal lambda is: `r lambda`
 Now, let's select the minimum RMSE for this model (for which the lambda is optimal), using the following code:
 
 
-```{r mov_user_reg results, echo=TRUE, message = FALSE, warning = FALSE}
+```{r mov_user_reg results}
    
       rmse_reg = min(rmses)
 
@@ -1644,7 +1680,7 @@ This model generated the desired RMSE value of `r rmse_reg` with an improvement 
 
 ###  5.6 Evaluating the selected model on validation dataset
 
-```{r regularized mov_usr_Validation_model, echo=TRUE, message = FALSE, warning = FALSE}
+```{r regularized mov_usr_Validation_model}
       ############################################################################
       # Predict via regularisation, movie and user effect model on validation set
       ############################################################################
@@ -1665,15 +1701,18 @@ This model generated the desired RMSE value of `r rmse_reg` with an improvement 
       group_by(userId) %>%
       summarise(b_u = sum(rating - b_i - mu_edx)/(n()+lambda))
               
+      # true_and_predicted_ratings is a temporary dataset to store 
+      # predicted ratings along with other edx colums
+      true_and_predicted_ratings <- validation %>% 
+
       # first left join validations with movie bias by movieId and then 
       # join again with user bias using userId
-      predicted_ratings <- validation %>%
       left_join(movie_bias, by = "movieId") %>%
       left_join(user_bias, by = "userId") %>%
-      mutate(pred = mu_edx + b_i + b_u) 
-     
-      p_r<- predicted_ratings
-      predicted_ratings <- predicted_ratings %>%
+      mutate(pred = mu_edx + b_i + b_u)
+
+      # to pull predicted ratings for RMSE calculation
+      predicted_ratings <- true_and_predicted_ratings %>%
       pull(pred)
       
       # calculate RMSE on validation set
@@ -1688,14 +1727,14 @@ This model generated the desired RMSE value of `r rmse_reg` with an improvement 
         kable("latex", booktabs = T) %>% 
         kable_styling(latex_options = c("striped", "hover", "condensed")) %>%
       
-      # to group rows in various catagories    
-      pack_rows("Basic Prediction Model", 1, 1) %>%
-      pack_rows("Single Predictor Model", 2, 5)  %>%
-      pack_rows("Multipe Predictors Model", 6, 6) %>%
-      pack_rows("Regularized Model", 7, 8) %>%
-      row_spec(0, bold = T) %>%
-      # to highlight the last row  
-      row_spec(8:8, bold = T, color = "white", background = "#D7261E")
+        # to group rows in various catagories    
+        pack_rows("Basic Prediction Model", 1, 1) %>%
+        pack_rows("Single Predictor Model", 2, 5)  %>%
+        pack_rows("Multipe Predictors Model", 6, 6) %>%
+        pack_rows("Regularized Model", 7, 8) %>%
+        row_spec(0, bold = T) %>%
+        # to highlight the last row  
+        row_spec(8:8, bold = T, color = "white", background = "#D7261E")
 
 ```
 
@@ -1709,7 +1748,7 @@ This model generated the desired RMSE value of *`r round(model_reg_val, digits =
 
 The result of RMSE derived from various models is listed below. As we can clearly see there is an improvement as we moved from the basic Average Rating model to the Regularized model. From all the models explored in this project, the **regularized Movie and User Effects model** seems to be the best and the finally proposed model with the lowest RMSE (highlighted in green).
 
-```{r results, echo=TRUE, message = FALSE, warning = FALSE}
+```{r results}
       # to display result tables with RMSE model results 
       rmse_results %>% 
       kable("latex", booktabs = T) %>% 
@@ -1761,10 +1800,13 @@ One such example is splitting single pipe-delimited concatenated `genres` catego
     + [Chapter 34.9 Regularization](https://rafalab.github.io/dsbook/large-datasets.html#regularization)
 
 
+# 9. Github Repo
 
-```{r memory cleanup, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+* https://github.com/jha-r/Harvardx-PH125.9x-Capstone-MovieLens
+
+```{r memory cleanup, echo = FALSE, results = "hide"}
       # Remove objects    
-      rm(train_set_dr, train_set_ma, train_set_usr, year_released, cls, usr, mu)  
+      rm(train_set_dr, train_set_ma, train_set_usr, year_released, cls, usr, mu, YRat_avgs, YRel_avgs, edx, movie_bias, user_bias)  
       # Call Garbage Collector
       gc()
 ```
